@@ -1,0 +1,17 @@
+/target/
+.settings/
+.settings/*
+.project
+.classpath
+.idea
+*.iml
+/target/
+/target/
+/target/
+.DS_Store
+### Logs ###
+/logs/*
+
+
+
+
