@@ -8,7 +8,7 @@
     <parent>
         <artifactId>subscriber</artifactId>
         <groupId>vn.metech</groupId>
-        <version>1.0</version>
+        <version>1.1</version>
         <relativePath>../subscriber/pom.xml</relativePath>
     </parent>
 

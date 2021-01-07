@@ -12,12 +12,13 @@
 
 	<groupId>vn.metech</groupId>
 	<artifactId>subscriber-verify</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<name>demo</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
 		<java.version>1.8</java.version>
+		<subscriber-verify.version>1.1</subscriber-verify.version>
 	</properties>
 
 	<dependencyManagement>
@@ -33,6 +34,11 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>vn.metech</groupId>
+			<artifactId>common-core</artifactId>
+			<version>${subscriber-verify.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>net.javacrumbs.shedlock</groupId>
 			<artifactId>shedlock-spring</artifactId>
