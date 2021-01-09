@@ -31,11 +31,11 @@ public interface ConfirmInfoRepository extends IRepository<ConfirmInfo> {
 
     List<SubPartnerResponse> getConfirmInfoSubPartnerIdBy(String partnerId);
 
-    PageResponse<ConfirmInfo> getConfirmInfoBy(ConfirmRequest confirmRequest, PageRequest page);
+    PageResponse<ConfirmInfo> getConfirmInfoBy(ConfirmRequest confirmRequest);
 
     List<ConfirmInfo> getConfirmInfoByBy(ConfirmRequest confirmRequest, PageRequest page);
 
-    PageResponse<ConfirmInfoResponse> getFilterRequest(FilterRequest filter, PageRequest page);
+    PageResponse<ConfirmInfoResponse> getReportConfirmInfoResponse(FilterRequest filter);
 
-    List<ConfirmInfoResponse> getFilterRequestBy(FilterRequest filter, PageRequest page);
+//    List<ConfirmInfoResponse> getFilterRequestBy(FilterRequest filter, PageRequest page);
 }

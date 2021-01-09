@@ -13,13 +13,15 @@ public class MonitorResponse {
     private String requestId;
     private String phoneNumber;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ")
+    @JsonFormat(pattern="yyyy/MM/dd - HH:mm:ss")
     private Date createdDate;
     private int statusCode;
     private String status;
     private ServiceType serviceType;
     private String account;
     private String partnerName;
+    private String subPartnerName;
+    private String telco="MBF";
     private String partnerId;
 
     public static MonitorResponse of(ConfirmInfo confirmInfo) {
@@ -36,7 +38,7 @@ public class MonitorResponse {
         }
 
         monitorResponse.serviceType = confirmInfo.getServiceType();
-
+        monitorResponse.setSubPartnerName(confirmInfo.getSubPartnerName());
         return monitorResponse;
     }
 
@@ -117,5 +119,21 @@ public class MonitorResponse {
 
     public void setPartnerId(String partnerId) {
         this.partnerId = partnerId;
+    }
+
+    public String getSubPartnerName() {
+        return subPartnerName;
+    }
+
+    public void setSubPartnerName(String subPartnerName) {
+        this.subPartnerName = subPartnerName;
+    }
+
+    public String getTelco() {
+        return telco;
+    }
+
+    public void setTelco(String telco) {
+        this.telco = telco;
     }
 }

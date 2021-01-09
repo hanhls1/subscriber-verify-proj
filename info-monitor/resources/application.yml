@@ -1,0 +1,44 @@
+---
+eureka:
+  instance:
+    appname: monitor-config
+server:
+  port: 8003
+sms:
+  request-uri: "https://3c-api1.mobifone.vn/0936186962"
+  security-key: SVJhWk1uTl9BeVFfdVdF
+  service-number: 0936186962
+spring:
+  application:
+    name: monitor-config
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    password: Tumotdenchin69@@
+    url: "jdbc:sqlserver://localhost:1433;databaseName=info;"
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.SQLServer2012Dialect
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: "false"
+    properties:
+      hibernate:
+        format-sql: "true"
+    show-sql: "true"
+  mail:
+    host: smtp.gmail.com
+    password: Abc54321
+    properties:
+      mail:
+        smtp:
+          auth: "true"
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: "false"
+            port: "465"
+    username: verifya4321@gmail.com
+  profiles:
+    active: local

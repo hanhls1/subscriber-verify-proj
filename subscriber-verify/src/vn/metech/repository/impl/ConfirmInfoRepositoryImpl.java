@@ -1,6 +1,7 @@
 package vn.metech.repository.impl;
 
 
+import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Repository;
 import vn.metech.common.ServiceType;
 import vn.metech.dto.ConfirmInfoFilterIdResponse;
@@ -16,9 +17,12 @@ import vn.metech.repository.base.RepositoryImpl;
 import vn.metech.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
+import java.util.Queue;
+import java.util.stream.Collectors;
 
 @Repository
 public class ConfirmInfoRepositoryImpl extends RepositoryImpl<ConfirmInfo> implements ConfirmInfoRepository {
@@ -49,7 +53,6 @@ public class ConfirmInfoRepositoryImpl extends RepositoryImpl<ConfirmInfo> imple
             return null;
         }
     }
-
 
 
     @Override
@@ -157,7 +160,7 @@ public class ConfirmInfoRepositoryImpl extends RepositoryImpl<ConfirmInfo> imple
     }
 
     @Override
-    public List<SubPartnerResponse> getConfirmInfoSubPartnerIdBy(String partnerId){
+    public List<SubPartnerResponse> getConfirmInfoSubPartnerIdBy(String partnerId) {
         boolean partnerFill = !StringUtils.isEmpty(partnerId);
 
         String selectQl = "select new vn.metech.dto.response.SubPartnerResponse( ci.subPartnerId, ci.subPartnerName)" +
@@ -175,7 +178,7 @@ public class ConfirmInfoRepositoryImpl extends RepositoryImpl<ConfirmInfo> imple
 
 
     @Override
-    public PageResponse<ConfirmInfo> getConfirmInfoBy(ConfirmRequest confirmRequest, PageRequest page) {
+    public PageResponse<ConfirmInfo> getConfirmInfoBy(ConfirmRequest confirmRequest) {
         boolean statusFill = !StringUtils.isEmpty(confirmRequest.getStatus());
         boolean serviceTypeFill = confirmRequest.getServiceType() != null;
         boolean partnerFill = !StringUtils.isEmpty(confirmRequest.getPartnerId());
@@ -185,69 +188,69 @@ public class ConfirmInfoRepositoryImpl extends RepositoryImpl<ConfirmInfo> imple
         boolean toDateFill = confirmRequest.getToDate() != null;
 
         PageResponse<ConfirmInfo> res = new PageResponse<>();
-        res.setCurrentPage(page.getCurrentPage());
-        res.setPageSize(page.getPageSize());
-        try {
+        res.setCurrentPage(confirmRequest.getCurrentPage());
+        res.setPageSize(confirmRequest.getPageSize());
+//        try {
 
-            String countQL = "select count(ci.id) from " + clazz.getName() +
-                    " ci where " + " ci.statusCode is not null " +
-                    (statusFill ? " and ci.status like :status " : "") +
-                    (serviceTypeFill ? " and ci.serviceType = :serviceType " : "") +
-                    (partnerFill ? " and ci.partnerId = :partnerId " : "") +
-                    (subPartnerFill ? " and ci.subPartnerId = :subPartnerId " : "") +
-                    (phoneNumberFill ? "AND phoneNumber LIKE :phoneNumber " : "") +
-                    (fromDateFill ? "AND :fromDate <= createdDate " : "") +
-                    (toDateFill ? "AND :toDate >= createdDate " : "") //
-                    ;
-            String selectQl = "from " + clazz.getName() +
-                    " ci where " + " ci.statusCode is not null " +
-                    (statusFill ? " and ci.status like :status " : "") + //
-                    (serviceTypeFill ? " and ci.serviceType = :serviceType " : "") + //
-                    (partnerFill ? " and ci.partnerId = :partnerId " : "") + //
-                    (subPartnerFill ? " and ci.subPartnerId = :subPartnerId " : "") +
-                    (phoneNumberFill ? "AND phoneNumber LIKE :phoneNumber " : "") +
-                    (fromDateFill ? "AND :fromDate <= createdDate " : "") +
-                    (toDateFill ? "AND :toDate >= createdDate " : "") +
-                    " order by ci.createdDate ";
-            TypedQuery<Long> countQuery = em.createQuery(countQL, Long.class);
-            TypedQuery<ConfirmInfo> selectQuery = em.createQuery(selectQl, clazz);
+        String countQL = "select count(ci.id) from " + clazz.getName() +
+                " ci where " + " ci.statusCode is not null " +
+                (statusFill ? " and ci.status like :status " : "") +
+                (serviceTypeFill ? " and ci.serviceType = :serviceType " : "") +
+                (partnerFill ? " and ci.partnerId = :partnerId " : "") +
+                (subPartnerFill ? " and ci.subPartnerId = :subPartnerId " : "") +
+                (phoneNumberFill ? "AND phoneNumber LIKE :phoneNumber " : "") +
+                (fromDateFill ? "AND :fromDate <= createdDate " : "") +
+                (toDateFill ? "AND :toDate >= createdDate " : "") //
+                ;
+        String selectQl = "from " + clazz.getName() +
+                " ci where " + " ci.statusCode is not null " +
+                (statusFill ? " and ci.status like :status " : "") + //
+                (serviceTypeFill ? " and ci.serviceType = :serviceType " : "") + //
+                (partnerFill ? " and ci.partnerId = :partnerId " : "") + //
+                (subPartnerFill ? " and ci.subPartnerId = :subPartnerId " : "") +
+                (phoneNumberFill ? "AND phoneNumber LIKE :phoneNumber " : "") +
+                (fromDateFill ? "AND :fromDate <= createdDate " : "") +
+                (toDateFill ? "AND :toDate >= createdDate " : "") +
+                " order by ci.createdDate ";
+        TypedQuery<Long> countQuery = em.createQuery(countQL, Long.class);
+        TypedQuery<ConfirmInfo> selectQuery = em.createQuery(selectQl, clazz);
 
-            if (statusFill) {
-                countQuery.setParameter("status", confirmRequest.getStatus());
-                selectQuery.setParameter("status", confirmRequest.getStatus());
-            }
-
-            if (serviceTypeFill) {
-                countQuery.setParameter("serviceType", confirmRequest.getServiceType());
-                selectQuery.setParameter("serviceType", confirmRequest.getServiceType());
-            }
-            if (partnerFill) {
-                countQuery.setParameter("partnerId", confirmRequest.getPartnerId());
-                selectQuery.setParameter("partnerId", confirmRequest.getPartnerId());
-            }
-
-            if (subPartnerFill) {
-                countQuery.setParameter("subPartnerId", confirmRequest.getSubPartnerId());
-                selectQuery.setParameter("subPartnerId", confirmRequest.getSubPartnerId());
-            }
-            if (phoneNumberFill) {
-                selectQuery.setParameter("phoneNumber", "%" + confirmRequest.getPhoneNumber() + "%");
-                countQuery.setParameter("phoneNumber", "%" + confirmRequest.getPhoneNumber() + "%");
-            }
-            if (fromDateFill) {
-                selectQuery.setParameter("fromDate", confirmRequest.getFromDate());
-                countQuery.setParameter("fromDate", confirmRequest.getFromDate());
-            }
-            if (toDateFill) {
-                selectQuery.setParameter("toDate", confirmRequest.getToDate());
-                countQuery.setParameter("toDate", confirmRequest.getToDate());
-            }
-
-            res.setTotal(countQuery.getSingleResult());
-            res.setData(selectQuery.setFirstResult(page.skip()).setMaxResults(page.getPageSize()).getResultList());
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (statusFill) {
+            countQuery.setParameter("status", confirmRequest.getStatus());
+            selectQuery.setParameter("status", confirmRequest.getStatus());
         }
+
+        if (serviceTypeFill) {
+            countQuery.setParameter("serviceType", confirmRequest.getServiceType());
+            selectQuery.setParameter("serviceType", confirmRequest.getServiceType());
+        }
+        if (partnerFill) {
+            countQuery.setParameter("partnerId", confirmRequest.getPartnerId());
+            selectQuery.setParameter("partnerId", confirmRequest.getPartnerId());
+        }
+
+        if (subPartnerFill) {
+            countQuery.setParameter("subPartnerId", confirmRequest.getSubPartnerId());
+            selectQuery.setParameter("subPartnerId", confirmRequest.getSubPartnerId());
+        }
+        if (phoneNumberFill) {
+            selectQuery.setParameter("phoneNumber", "%" + confirmRequest.getPhoneNumber() + "%");
+            countQuery.setParameter("phoneNumber", "%" + confirmRequest.getPhoneNumber() + "%");
+        }
+        if (fromDateFill) {
+            selectQuery.setParameter("fromDate", confirmRequest.getFromDate());
+            countQuery.setParameter("fromDate", confirmRequest.getFromDate());
+        }
+        if (toDateFill) {
+            selectQuery.setParameter("toDate", confirmRequest.getToDate());
+            countQuery.setParameter("toDate", confirmRequest.getToDate());
+        }
+
+        res.setTotal(countQuery.getSingleResult());
+        res.setData(selectQuery.setFirstResult(confirmRequest.skip()).setMaxResults(confirmRequest.getPageSize()).getResultList());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         return res;
     }
@@ -326,80 +329,95 @@ public class ConfirmInfoRepositoryImpl extends RepositoryImpl<ConfirmInfo> imple
     }
 
     @Override
-    public PageResponse<ConfirmInfoResponse> getFilterRequest(FilterRequest filter, PageRequest page) {
+    public PageResponse<ConfirmInfoResponse> getReportConfirmInfoResponse(FilterRequest filter) {
         boolean subPartnerFill = !StringUtils.isEmpty(filter.getSubPartnerId());
         boolean fromDateFill = filter.getFromDate() != null;
         boolean toDateFill = filter.getToDate() != null;
 
         PageResponse<ConfirmInfoResponse> res = new PageResponse<>();
-        res.setCurrentPage(page.getCurrentPage());
-        res.setPageSize(page.getPageSize());
+        res.setCurrentPage(filter.getCurrentPage());
+        res.setPageSize(filter.getPageSize());
 
-        try {
+//        try {
+//        String countQL = "select count(ci.partner_Name) " +
+//                " from " + " Confirm_Info ci " + " where ci.status is not null " +
+//                (subPartnerFill ? " and ci.sub_Partner_Id = :subPartnerId " : "") +
+//                (fromDateFill ? " AND :fromDate <= ci.created_Date " : "") +
+//                (toDateFill ? " AND :toDate >= ci.created_Date " : "") +
+//                " group by ci.partner_Name, ci.sub_Partner_Name, CAST(ci.created_Date as date)";
+////                " ";
+        String selectQl = "select new vn.metech.dto.response.ConfirmInfoResponse(ci.partnerName, ci.subPartnerName, count (case when ci.statusCode = 0 then 1 else null end), " +
+                " count (case when ci.statusCode = 1 then 1 else null end), count (ci.statusCode), CAST(ci.createdDate as date)) " +
+                " from " + " ConfirmInfo ci " + " where ci.status is not null " +
+                (subPartnerFill ? " and ci.subPartnerId = :subPartnerId " : "") +
+                (fromDateFill ? " AND :fromDate <= ci.createdDate " : "") +
+                (toDateFill ? " AND :toDate >= ci.createdDate " : "") +
+                " group by ci.partnerName, ci.subPartnerName, CAST(ci.createdDate as date)" +
+                " order by CAST(ci.createdDate as date)";
+        TypedQuery<ConfirmInfoResponse> selectQuery = em.createQuery(selectQl, ConfirmInfoResponse.class);
+//        Query countQuery = em.createNativeQuery(countQL, Long.class);
 
-            String selectQl = "select new vn.metech.dto.response.ConfirmInfoResponse(ci.partnerName, ci.subPartnerName, count (case when ci.statusCode = 0 then 1 else null end), " +
-                    " count (case when ci.statusCode = 1 then 1 else null end), count (ci.statusCode), CAST(ci.createdDate as date)) " +
-                    " from " + " ConfirmInfo ci " + " where ci.status is not null " +
-                    (subPartnerFill ? " and ci.subPartnerId = :subPartnerId " : "") +
-                    (fromDateFill ? " AND :fromDate <= ci.createdDate " : "") +
-                    (toDateFill ? " AND :toDate >= ci.createdDate " : "") +
-                    " group by ci.partnerName, ci.subPartnerName, CAST(ci.createdDate as date)" +
-                    " order by CAST(ci.createdDate as date)";
-            TypedQuery<ConfirmInfoResponse> selectQuery = em.createQuery(selectQl, ConfirmInfoResponse.class);
-
-            if (subPartnerFill) {
-                selectQuery.setParameter("subPartnerId", filter.getSubPartnerId());
-            }
-
-            if (toDateFill) {
-                selectQuery.setParameter("toDate", filter.getToDate());
-            }
-            if (fromDateFill) {
-                selectQuery.setParameter("fromDate", filter.getFromDate());
-            }
-
-            res.setTotal(selectQuery.getResultList().size());
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (subPartnerFill) {
+            selectQuery.setParameter("subPartnerId", filter.getSubPartnerId());
+//            countQuery.setParameter("subPartnerId", filter.getSubPartnerId());
         }
+
+        if (toDateFill) {
+            selectQuery.setParameter("toDate", filter.getToDate());
+//            countQuery.setParameter("toDate", filter.getToDate());
+        }
+        if (fromDateFill) {
+            selectQuery.setParameter("fromDate", filter.getFromDate());
+//            countQuery.setParameter("fromDate", filter.getFromDate());
+        }
+
+        List<ConfirmInfoResponse> totalResults = selectQuery.getResultList();
+       res.setTotal(totalResults.size());
+//        List<ConfirmInfoResponse> confirmInfoResponses = selectQuery.setFirstResult(page.skip()).setMaxResults(page.getPageSize()).getResultList();
+        List<ConfirmInfoResponse> confirmInfoResponses = totalResults.stream().skip((filter.getCurrentPage()-1)*filter.getPageSize()).limit(filter.getPageSize()).collect(Collectors.toList());
+        res.setData(confirmInfoResponses);
+//        res.setCurrentPage(filter.getCurrentPage());
+//        res.setPageSize(filter.getPageSize());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         return res;
     }
 
-    @Override
-    public List<ConfirmInfoResponse> getFilterRequestBy(FilterRequest filter, PageRequest page) {
-        boolean subPartnerFill = !StringUtils.isEmpty(filter.getSubPartnerId());
-        boolean fromDateFill = filter.getFromDate() != null;
-        boolean toDateFill = filter.getToDate() != null;
-
-        try {
-
-            String selectQl = "select new vn.metech.dto.response.ConfirmInfoResponse (ci.partnerName, ci.subPartnerName, count (case when ci.statusCode = 0 then 1 else null end)," +
-                    " count (case when ci.statusCode <> 0 then 1 else null end), count (ci.statusCode), CAST(ci.createdDate as date))" +
-                    " from " + " ConfirmInfo ci " + " where ci.status is not null " +
-                    (subPartnerFill ? " and ci.subPartnerId = :subPartnerId " : "") +
-                    (fromDateFill ? " AND :fromDate <= ci.createdDate " : "") +
-                    (toDateFill ? " AND :toDate >= ci.createdDate " : "") +
-                    " group by ci.partnerName, ci.subPartnerName, CAST(ci.createdDate as date)" +
-                    " order by CAST(ci.createdDate as date)";
-            TypedQuery<ConfirmInfoResponse> selectQuery = em.createQuery(selectQl, ConfirmInfoResponse.class);
-
-            if (subPartnerFill) {
-                selectQuery.setParameter("subPartnerId", filter.getSubPartnerId());
-            }
-
-            if (toDateFill) {
-                selectQuery.setParameter("toDate", filter.getToDate());
-            }
-            if (fromDateFill) {
-                selectQuery.setParameter("fromDate", filter.getFromDate());
-            }
-
-            return selectQuery.setFirstResult(page.skip()).setMaxResults(page.getPageSize()).getResultList();
-        } catch (Exception e) {
-            return null;
-        }
-    }
+//    @Override
+//    public List<ConfirmInfoResponse> getFilterRequestBy(FilterRequest filter, PageRequest page) {
+//        boolean subPartnerFill = !StringUtils.isEmpty(filter.getSubPartnerId());
+//        boolean fromDateFill = filter.getFromDate() != null;
+//        boolean toDateFill = filter.getToDate() != null;
+//
+//        try {
+//
+//            String selectQl = "select new vn.metech.dto.response.ConfirmInfoResponse (ci.partnerName, ci.subPartnerName, count (case when ci.statusCode = 0 then 1 else null end)," +
+//                    " count (case when ci.statusCode <> 0 then 1 else null end), count (ci.statusCode), CAST(ci.createdDate as date))" +
+//                    " from " + " ConfirmInfo ci " + " where ci.status is not null " +
+//                    (subPartnerFill ? " and ci.subPartnerId = :subPartnerId " : "") +
+//                    (fromDateFill ? " AND :fromDate <= ci.createdDate " : "") +
+//                    (toDateFill ? " AND :toDate >= ci.createdDate " : "") +
+//                    " group by ci.partnerName, ci.subPartnerName, CAST(ci.createdDate as date)" +
+//                    " order by CAST(ci.createdDate as date)";
+//            TypedQuery<ConfirmInfoResponse> selectQuery = em.createQuery(selectQl, ConfirmInfoResponse.class);
+//
+//            if (subPartnerFill) {
+//                selectQuery.setParameter("subPartnerId", filter.getSubPartnerId());
+//            }
+//
+//            if (toDateFill) {
+//                selectQuery.setParameter("toDate", filter.getToDate());
+//            }
+//            if (fromDateFill) {
+//                selectQuery.setParameter("fromDate", filter.getFromDate());
+//            }
+//
+//            return selectQuery.setFirstResult(page.skip()).setMaxResults(page.getPageSize()).getResultList();
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
 
 }

@@ -46,7 +46,7 @@ public class MonitorRestController {
     }
 
     @RequestMapping(value = "/listSubPartner", method = RequestMethod.GET)
-    public List<SubPartnerResponse> getSubPartnerId(@RequestParam("partner-id") String partnerId) {
+    public List<SubPartnerResponse> getSubPartnerId(@RequestParam(value = "partnerId",required = false) String partnerId) {
         return confirmInfoService.getListSubPartner(partnerId);
     }
 
@@ -67,8 +67,8 @@ public class MonitorRestController {
             long n = monitorResponsePageResponse.getTotal() % monitorResponsePageResponse.getPageSize() == 0 ? 0 : 1;
             long k = m < 1 ? 1 : m + n;
             ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-            String[] csvHeader = {"Request ID", "phone Number", "Status Code", "Status", "Service Type", "Created Date", "Account", "Partner Name", "Partner ID"};
-            String[] nameMapping = {"requestId", "phoneNumber", "statusCode", "status", "serviceType", "createdDate", "account", "partnerName", "partnerId"};
+            String[] csvHeader = {"Request ID", "phone Number", "Status Code", "Status", "Service Type", "Created Date", "Account", "Partner Name","SubPartner Name", "Partner ID", "Telco"};
+            String[] nameMapping = {"requestId", "phoneNumber", "statusCode", "status", "serviceType", "createdDate", "account", "partnerName","subPartnerName", "partnerId","telco"};
             csvWriter.writeHeader(csvHeader);
 
             for (int i = 1; i <= k; i++) {

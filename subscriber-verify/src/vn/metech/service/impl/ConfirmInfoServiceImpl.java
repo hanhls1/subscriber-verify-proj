@@ -172,7 +172,7 @@ public class ConfirmInfoServiceImpl extends ServiceImpl<ConfirmInfo> implements 
         if (!userInfo.isAdmin()) {
             throw new RequestDuplicateException(req, "Account không tồn tại hoặc không được phép truy cập API");
         }
-        PageResponse<ConfirmInfo> confirmInfos = confirmInfoRepository.getConfirmInfoBy(confirmRequest, confirmRequest);
+        PageResponse<ConfirmInfo> confirmInfos = confirmInfoRepository.getConfirmInfoBy(confirmRequest);
      //   List<ConfirmInfo> confirmInfoList = confirmInfoRepository.getConfirmInfoByBy(confirmRequest, confirmRequest);
 
 //        return new PageResponse<>(confirmInfos.getTotal(), MonitorResponse.of(confirmInfoList), confirmRequest);
@@ -186,10 +186,11 @@ public class ConfirmInfoServiceImpl extends ServiceImpl<ConfirmInfo> implements 
         if (userInfo == null || !userInfo.isAdmin()) {
             throw new RequestDuplicateException(req, "Account không tồn tại hoặc không được phép truy cập API");
         }
-        PageResponse<ConfirmInfoResponse> confirm = confirmInfoRepository.getFilterRequest(filter, filter);
-        List<ConfirmInfoResponse> confirmList = confirmInfoRepository.getFilterRequestBy(filter, filter);
+        PageResponse<ConfirmInfoResponse> confirm = confirmInfoRepository.getReportConfirmInfoResponse(filter);
+//        List<ConfirmInfoResponse> confirmList = confirmInfoRepository.getFilterRequestBy(filter, filter);
 
-        return new PageResponse<>(confirm.getTotal(), confirmList, filter);
+//        return new PageResponse<>(confirm.getTotal(), confirm.getData(), filter);
+        return confirm;
     }
 
     @Override

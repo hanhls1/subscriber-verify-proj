@@ -69,6 +69,6 @@
         <module>../service-discovery/pom.xml</module>
         <module>../load-balancer/pom.xml</module>
         <module>../proxy-gateway/pom.xml</module>
-        <module>../common-core/pom.xml</module>
+       <module>../common-core-base/pom.xml</module>
     </modules>
 </project>

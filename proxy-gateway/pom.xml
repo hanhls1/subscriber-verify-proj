@@ -29,8 +29,8 @@
         </dependency>
         <dependency>
             <groupId>vn.metech</groupId>
-            <artifactId>common-core</artifactId>
-            <version>1.0</version>
+            <artifactId>common-core-base</artifactId>
+            <version>1.1</version>
         </dependency>
 
         <dependency>

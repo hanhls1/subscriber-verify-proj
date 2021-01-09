@@ -36,7 +36,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>vn.metech</groupId>
-			<artifactId>common-core</artifactId>
+			<artifactId>common-core-base</artifactId>
 			<version>${subscriber-verify.version}</version>
 		</dependency>
 		<dependency>

@@ -18,7 +18,7 @@ public class JpaProperties {
 
 	public JpaProperties() {
 		this.ddlAuto = "none";
-		this.showSql = "false";
+		this.showSql = "true";
 		this.batchInsert = "true";
 		this.batchUpdate = "true";
 		this.batchSize = "32";
