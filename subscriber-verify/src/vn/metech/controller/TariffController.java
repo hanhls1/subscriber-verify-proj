@@ -12,6 +12,7 @@ import vn.metech.shared.ActionResult;
 
 import javax.validation.Valid;
 
+//Bỏ cái này
 @RestController
 @RequestMapping("/billing/tariff")
 public class TariffController {

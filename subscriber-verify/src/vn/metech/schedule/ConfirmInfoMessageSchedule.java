@@ -16,6 +16,9 @@ import vn.metech.util.DateUtils;
 
 import java.util.Date;
 
+/**
+ * GỬI TIN NHĂN CONFIRM INFO
+ */
 @Component
 public class ConfirmInfoMessageSchedule {
 
