@@ -136,6 +136,7 @@ public class AuthorizationFilter extends ZuulFilter {
 			return null;
 		}
 
+
 		return authService.getUri().toString() +
 						"/" +
 						Auth.AUTH_CONTROLLER +

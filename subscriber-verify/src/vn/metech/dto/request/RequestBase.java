@@ -21,11 +21,11 @@ public class RequestBase extends Hashtable {
     protected Command command;
 
     //created
-    @NotNull
+//    @NotNull
     @JsonProperty("subPartnerId")
     protected String subPartnerId;
 
-    @NotNull
+//    @NotNull
     @JsonProperty("partnerId")
     protected String partnerId;
 

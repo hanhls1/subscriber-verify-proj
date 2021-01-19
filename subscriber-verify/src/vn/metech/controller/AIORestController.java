@@ -46,6 +46,7 @@ public class AIORestController {
     public ActionResult<? extends HashResponseBase>
     findResponse(@RequestHeader("user-id") String userId,
                  @Valid @RequestBody RequestBase requestBase) throws ParamInvalidException, RequestNotFoundException {
+
         return confirmInfoReceiveService.findResponse(requestBase, userId);
     }
 

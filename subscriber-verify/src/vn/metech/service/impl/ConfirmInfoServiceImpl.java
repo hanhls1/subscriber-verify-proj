@@ -25,6 +25,7 @@ import vn.metech.repository.jpa.StatusInfoCrudRepository;
 import vn.metech.dto.response.StatusResponse;
 import vn.metech.repository.jpa.PartnerCrudRepository;
 import vn.metech.repository.ISubPartnerRepository;
+import vn.metech.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -71,14 +72,20 @@ public class ConfirmInfoServiceImpl extends ServiceImpl<ConfirmInfo> implements 
             RequestBase request, String userId, boolean aio) throws ParamInvalidException,
             BalanceNotEnoughException, RequestDuplicateException, RequestTooManyException, SystemBusyException {
         apiReceiveLogCrudRepository.save(new ApiReceiveLog(request, userId, aio));
+        UserInfo userInfo = localService.getUserInfoAio(userId);
+
+        if (userInfo == null) {
+            throw new SystemBusyException(request, "Xảy ra lỗi trong quá trình request");
+        }
+        if(StringUtils.isEmpty(request.getPartnerId())) {
+            request.setPartnerId(userInfo.getPartnerId());
+        }
+        if(StringUtils.isEmpty(request.getSubPartnerId())) {
+            request.setSubPartnerId(userInfo.getSubPartnerId());
+        }
         long counter = confirmInfoRepository.countConfirmInfoByRequest(request.id());
         if (counter > 0) {
             throw new RequestDuplicateException(request, request.id());
-        }
-
-        UserInfo userInfo = localService.getUserInfoAio(userId);
-        if (userInfo == null) {
-            throw new SystemBusyException(request, "Xảy ra lỗi trong quá trình request");
         }
 
         ConfirmInfo confirmInfo = validateRequest(request, userInfo);
